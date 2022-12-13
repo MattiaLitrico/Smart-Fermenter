@@ -18,7 +18,22 @@ class FermentationData(Dataset):
         self.train = train_mode
 
         # lists of number of fermentations for training and testing
-        self.train_fermentations = [11, 12, 14, 16, 17, 19, 20, 22, 23, 24, 25, 26]
+        self.train_fermentations = [
+            # 11,
+            # 12,
+            # 14,
+            # 16,
+            # 17,
+            # 19,
+            # 20,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+        ]
         self.test_fermentations = [8]
 
         # variables with cumulative values
