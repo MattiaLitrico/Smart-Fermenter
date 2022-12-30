@@ -22,7 +22,7 @@ x_var = [
     # "dm_spump4",
     # "induction",
 ]
-y_var = ["induction"]  # ["od_600"]
+y_var = ["od_600"]
 
 
 def mix_interpolation(data):
