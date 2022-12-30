@@ -18,23 +18,25 @@ class FermentationData(Dataset):
         self.train = train_mode
 
         # lists of number of fermentations for training and testing
+        # Data
         self.train_fermentations = [
-            # 11,
-            # 12,
-            # 14,
-            # 16,
-            # 17,
-            # 19,
-            # 20,
-            22,
-            23,
-            24,
-            25,
-            26,
-            27,
-            28,
+            # 8,  # 0.540000
+            # 11,  # 3.670000
+            # 12,  # 3.840000
+            # 14,  # 4.500000
+            # 16,  # 2.050000
+            # 17,  # 17.000000
+            # 19,  # 14.500000
+            # 20,  # 14.800000
+            22,  # 0.500000
+            23,  # 0.570000
+            24,  # 0.530000
+            25,  # 0.554000
+            26,  # 0.532000
+            27,  # 0.598000
+            # 28,  # 0.674000
         ]
-        self.test_fermentations = [8]
+        self.test_fermentations = [28]
 
         # variables with cumulative values
         self.cumulative_var = [
@@ -66,7 +68,7 @@ class FermentationData(Dataset):
         self.y_var = y_var
 
         # Using fermentation 16 for computing normalisation parameters
-        self.fermentation_norm_number = 16
+        self.fermentation_norm_number = 22  # 16
         self.X_norm, _ = self.load_data(
             fermentation_number=self.fermentation_norm_number
         )

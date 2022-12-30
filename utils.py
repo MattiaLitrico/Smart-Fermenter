@@ -134,13 +134,30 @@ def mix_interpolation(data):
     return a * linear_local_interpolation(data) + b * polynomial_interpolation(data)
 
 
-def plot_od600_curve(preds, labels, dir):
+def plot_od600_curve(preds, labels, dir, mae, fpe):
     # Plot predicted values vs real values
 
+    plt.figure(0)
+    plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
     plt.plot(preds, label="Predicted")
     plt.plot(labels, label="Real interpolated")
     plt.legend()
+    plt.xlabel("sample index")
+    plt.ylabel("od600")
     plt.savefig(join(dir, "od600pred.jpg"))
+
+    idx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    idx = [int(len(labels) / 20) * x for x in idx]
+    idx[-1] = len(labels) - 1
+    # print(idx)
+    plt.figure(1)
+    plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
+    plt.plot(idx, preds[idx], label="Predicted")
+    plt.plot(idx, labels[idx], label="Real interpolated")
+    plt.legend()
+    plt.xlabel("sample index")
+    plt.ylabel("od600")
+    plt.savefig(join(dir, "od600pred_10points.jpg"))
 
 
 def reject_outliers(data, m=2):

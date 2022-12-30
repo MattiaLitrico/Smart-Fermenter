@@ -21,6 +21,7 @@ parser.add_argument("--num_layers", default=2, type=int)
 parser.add_argument("--seed", default=123)
 parser.add_argument("--gpuid", default=0, type=int)
 parser.add_argument("--weights", type=str, default="")
+parser.add_argument("--dataset", type=str, default="")
 parser.add_argument("--model", default="lstm", type=str)
 
 args = parser.parse_args()
@@ -48,6 +49,7 @@ def test(epoch, model, testloader):
     labels = np.zeros(len(test_dataset) + test_dataset.ws - 1)
     n_overlap = np.zeros(len(test_dataset) + test_dataset.ws - 1)
 
+    N = 5
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(testloader):
             iter += 1
@@ -60,11 +62,16 @@ def test(epoch, model, testloader):
             input, label = input.cuda(), label.cuda()
 
             output, h = model(input.float(), h)
+            # pdb.set_trace()
+
+            y = output.view(-1).cpu().numpy()
+            y_padded = np.pad(y, (N // 2, N - 1 - N // 2), mode="edge")
+            y_smooth = np.convolve(y_padded, np.ones((N,)) / N, mode="valid")
 
             # Store predictions and labels summing over the overlapping
-            preds[batch_idx : (batch_idx + test_dataset.ws)] += (
-                output.view(-1).cpu().numpy()
-            )
+            preds[
+                batch_idx : (batch_idx + test_dataset.ws)
+            ] += y_smooth  # (output.view(-1).cpu().numpy())
             labels[batch_idx : (batch_idx + test_dataset.ws)] += (
                 label.view(-1).cpu().numpy()
             )
@@ -84,7 +91,9 @@ def test(epoch, model, testloader):
 
 
 # Setting data
-test_dataset = FermentationData(work_dir="Data", train_mode=False, y_var=["od_600"])
+test_dataset = FermentationData(
+    work_dir=args.dataset, train_mode=False, y_var=["od_600"]
+)
 
 print("Loading testing-set!")
 test_loader = torch.utils.data.DataLoader(
@@ -126,8 +135,10 @@ acc, preds, labels = test(0, model, test_loader)
 preds = preds.reshape(-1, 1)
 labels = labels.reshape(-1, 1)
 
+mae = (abs(preds - labels)).mean()
+fpe = abs(preds[-1] - labels[-1]) / labels[-1] * 100
 utils.plot_od600_curve(
-    preds, labels, weights[:-17]
+    preds, labels, weights[:-17], mae, fpe
 )  # remove weights_best.tar from weights path
-print("\nMAE Error OD600: ", (abs(preds - labels)).mean())
-print("\nFPE: ", abs(preds[-1] - labels[-1]) / labels[-1] * 100, "%")
+print("\nMAE Error OD600: ", mae)
+print("\nFPE: ", fpe, "%")

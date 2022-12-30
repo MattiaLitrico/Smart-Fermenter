@@ -26,6 +26,7 @@ parser.add_argument("--seed", default=123)
 parser.add_argument("--gpuid", default=0, type=int)
 parser.add_argument("--run_name", type=str)
 parser.add_argument("--model", default="lstm", type=str)
+parser.add_argument("--dataset", type=str, default="")
 parser.add_argument("--wandb", action="store_true", help="Use wandb")
 
 args = parser.parse_args()
@@ -144,8 +145,12 @@ def compute_loss(output, label):
 
 
 # Setting data
-train_dataset = FermentationData(work_dir="./Data", train_mode=True, y_var=["od_600"])
-test_dataset = FermentationData(work_dir="./Data", train_mode=False, y_var=["od_600"])
+train_dataset = FermentationData(
+    work_dir=args.dataset, train_mode=True, y_var=["od_600"]
+)
+test_dataset = FermentationData(
+    work_dir=args.dataset, train_mode=False, y_var=["od_600"]
+)
 
 print("Loading training-set!")
 trainloader = torch.utils.data.DataLoader(
