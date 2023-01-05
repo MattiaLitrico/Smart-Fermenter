@@ -11,16 +11,16 @@ work_dir = "Data1/"
 # input variables
 x_var = [
     "m_ph",
-    # "m_ls_opt_do",
-    # "m_temp",
-    # "m_stirrer",
-    # "dm_o2",
-    # "dm_air",
-    # "dm_spump1",
-    # "dm_spump2",
-    # "dm_spump3",
-    # "dm_spump4",
-    # "induction",
+    "m_ls_opt_do",
+    "m_temp",
+    "m_stirrer",
+    "dm_o2",
+    "dm_air",
+    "dm_spump1",
+    "dm_spump2",
+    "dm_spump3",
+    "dm_spump4",
+    "induction",
 ]
 y_var = ["od_600"]
 
@@ -70,23 +70,74 @@ def unique(list1):
     return unique_list
 
 
-plt.figure(0)
+### plot x_var
+
+for var in range(len(x_var)):
+    plt.figure(var)
+    for n in [
+        8,
+        # 11,
+        # 12,
+        # 14,
+        # 16,
+        # 17,
+        # 19,
+        # 20,
+        22,
+        # 23,
+        # 24,
+        25,
+        26,
+        # 27,
+        # 28,
+    ]:
+        # pdb.set_trace()
+        data = utils.load_data(
+            work_dir=work_dir,
+            fermentation_number=n,
+            data_file="data.xlsx",
+            x_cols=[x_var[var]],
+            y_cols=y_var,
+        )
+        #
+        # pdb.set_trace()
+        X = data[0]  # [data[1] > 0]
+        plt.plot(X, label="batch-%d" % (n))
+        #
+        # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
+        # plt.plot(Y_I, label="I_batch-%d" % (n))
+        #
+        print(
+            "Var: %s, batch-%d, first value=%f, last value=%f"
+            % (x_var[var], n, X[0], X[-1])
+        )
+
+    plt.legend()
+    plt.xlabel("sample index")
+    plt.ylabel(x_var[var])
+    plt.title(work_dir[:-1])
+    plt.savefig(x_var[var] + ".png")
+    plt.close()
+
+# pdb.set_trace()
+### plot y_var
+plt.figure(100)
 for n in [
     8,
-    11,
-    12,
-    14,
-    16,
-    17,
-    19,
-    20,
+    # 11,
+    # 12,
+    # 14,
+    # 16,
+    # 17,
+    # 19,
+    # 20,
     22,
-    23,
-    24,
+    # 23,
+    # 24,
     25,
     26,
-    27,
-    28,
+    # 27,
+    # 28,
 ]:
     data = utils.load_data(
         work_dir=work_dir,
@@ -103,10 +154,10 @@ for n in [
     # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
     # plt.plot(Y_I, label="I_batch-%d" % (n))
     #
-    print("batch-%d, first value=%f, last value=%f" % (n, Y[0], Y[1]))
+    print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y[0], Y[-1]))
 
 plt.legend()
 plt.xlabel("sample index")
 plt.ylabel("od600")
 plt.title(work_dir[:-1])
-plt.savefig("data_od600.jpg")
+plt.savefig("od600.png")
