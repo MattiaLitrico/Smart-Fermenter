@@ -2,11 +2,15 @@ import utils
 import numpy as np
 import pdb
 import matplotlib.pyplot as plt
+import os
 
-work_dir = "Data1/"
+# work_dir = "Data1/"
 # work_dir = "Data/"
-# work_dir = "Data3/"
+work_dir = "Data3/"
 # work_dir = "Data4/"
+
+if not os.path.exists("data_analysis/" + work_dir[:-1]):
+    os.makedirs("data_analysis/" + work_dir[:-1])
 
 # input variables
 x_var = [
@@ -116,7 +120,7 @@ for var in range(len(x_var)):
     plt.xlabel("sample index")
     plt.ylabel(x_var[var])
     plt.title(work_dir[:-1])
-    plt.savefig(x_var[var] + ".png")
+    plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png")
     plt.close()
 
 # pdb.set_trace()
@@ -160,4 +164,4 @@ plt.legend()
 plt.xlabel("sample index")
 plt.ylabel("od600")
 plt.title(work_dir[:-1])
-plt.savefig("od600.png")
+plt.savefig("data_analysis/" + work_dir[:-1] + "/" + "od600.png")

@@ -29,7 +29,31 @@ def load_data(
 
     if x_cols is not []:
         for idx, x_c in enumerate(x_cols):
-            X[:, idx] = np.array(list(data[x_c].values()))
+            tmp = np.array(list(data[x_c].values()))
+            # if x_c in [
+            #     # "m_ph",
+            #     # "m_stirrer",
+            #     "dm_o2",
+            #     "dm_air",
+            #     "dm_spump1",
+            #     "dm_spump2",
+            #     "dm_spump3",
+            #     "dm_spump4",
+            # ]:
+            #     # pdb.set_trace()
+            #     print(
+            #         "################### Normalizing: {} of batch-{} [index-0:{} min:{} and max:{}]".format(
+            #             x_c,
+            #             str(fermentation_number),
+            #             str(tmp[0]),
+            #             str(min(tmp)),
+            #             str(max(tmp)),
+            #         )
+            #     )
+            #     tmp -= tmp[0]  # min(tmp)
+            #     # tmp /= max(tmp)
+            #     print("Now: min:{} and max:{}".format(str(min(tmp)), str(max(tmp))))
+            X[:, idx] = tmp
 
     if y_cols is not []:
         for idx, y_c in enumerate(y_cols):
@@ -144,7 +168,7 @@ def plot_od600_curve(preds, labels, dir, mae, fpe):
     plt.legend()
     plt.xlabel("sample index")
     plt.ylabel("od600")
-    plt.savefig(join(dir, "od600pred.jpg"))
+    plt.savefig(join(dir, "od600pred.png"))
 
     idx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     idx = [int(len(labels) / 20) * x for x in idx]
@@ -157,7 +181,7 @@ def plot_od600_curve(preds, labels, dir, mae, fpe):
     plt.legend()
     plt.xlabel("sample index")
     plt.ylabel("od600")
-    plt.savefig(join(dir, "od600pred_10points.jpg"))
+    plt.savefig(join(dir, "od600pred_10points.png"))
 
 
 def reject_outliers(data, m=2):

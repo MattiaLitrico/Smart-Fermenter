@@ -31,12 +31,12 @@ class FermentationData(Dataset):
             22,  # 0.500000
             23,  # 0.570000
             24,  # 0.530000
-            25,  # 0.554000
+            # 25,  # 0.554000
             26,  # 0.532000
             27,  # 0.598000
-            # 28,  # 0.674000
+            28,  # 0.674000
         ]
-        self.test_fermentations = [28]
+        self.test_fermentations = [25]
 
         # variables with cumulative values
         self.cumulative_var = [
@@ -52,7 +52,7 @@ class FermentationData(Dataset):
 
         # input variables
         self.x_var = [
-            "m_ph",
+            # "m_ph",
             "m_ls_opt_do",
             "m_temp",
             "m_stirrer",
