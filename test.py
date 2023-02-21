@@ -13,6 +13,7 @@ import warnings
 from model import *
 import random
 import utils
+import math
 
 parser = argparse.ArgumentParser(description="PyTorch CIFAR Training")
 parser.add_argument("--batch_size", default=256, type=int, help="test batchsize")
@@ -37,7 +38,7 @@ def test(epoch, model, testloader):
     model.eval()
 
     loss = 0
-    acc = 0
+    err = 0
 
     iter = 0
 
@@ -49,7 +50,7 @@ def test(epoch, model, testloader):
     labels = np.zeros(len(test_dataset) + test_dataset.ws - 1)
     n_overlap = np.zeros(len(test_dataset) + test_dataset.ws - 1)
 
-    N = 5
+    N = 10
     with torch.no_grad():
         for batch_idx, (input, label) in enumerate(testloader):
             iter += 1
@@ -78,16 +79,17 @@ def test(epoch, model, testloader):
             n_overlap[batch_idx : (batch_idx + test_dataset.ws)] += 1.0
 
             loss += mse(output, label.float())
-            acc += mae(output, label.float()).item()
+            # err += mae(output, label.float()).item()
+            err += torch.sqrt(mse(output, label.float())).item()
 
-    loss = loss / (iter)
-    acc = acc / (iter)
+    loss = loss / len(test_dataset)
+    err = err / len(test_dataset)
 
     # Compute the average dividing for the number of overlaps
     preds /= n_overlap
     labels /= n_overlap
 
-    return acc, preds, labels
+    return err, preds, labels
 
 
 # Setting data
@@ -126,19 +128,43 @@ weights = (
 model = utils.load_weights(model, weights)
 
 mse = nn.MSELoss()
-mae = nn.L1Loss()
+# mae = nn.L1Loss()
 
 # Testing
 print("\nTesting")
-acc, preds, labels = test(0, model, test_loader)
+err, preds, labels = test(0, model, test_loader)
 
 preds = preds.reshape(-1, 1)
 labels = labels.reshape(-1, 1)
 
-mae = (abs(preds - labels)).mean()
-fpe = abs(preds[-1] - labels[-1]) / labels[-1] * 100
+preds = preds[50:]
+labels = labels[50:]
+
+
+# mae = (abs(preds - labels)).mean()
+# fpe = abs(preds[-1] - labels[-1]) / labels[-1] * 100
+
+mse = np.square(np.subtract(preds, labels)).mean()
+rmse = math.sqrt(mse)
+
+# Relative Error on Final Yield
+refy = abs(preds[-1] - labels[-1])
+
+# pdb.set_trace()
+np.savez(
+    weights.split("/weights")[0] + "/results.npz",
+    preds=preds,
+    labels=labels,
+    rmse=rmse,
+    refy=refy,
+)
+print("Saved: ", weights.split("/weights")[0] + "/results.npz")
+#
 utils.plot_od600_curve(
-    preds, labels, weights[:-17], mae, fpe
+    preds, labels, weights[:-17], rmse, refy
 )  # remove weights_best.tar from weights path
-print("\nMAE Error OD600: ", mae)
-print("\nFPE: ", fpe, "%")
+
+# print("\nMAE Error OD600: ", mae)
+# print("\nFPE: ", fpe)  # , "%")
+print("\nRMSE Error OD600: ", rmse)
+print("\nREFY: ", refy)  # , "%")

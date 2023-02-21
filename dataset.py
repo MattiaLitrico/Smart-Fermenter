@@ -12,7 +12,7 @@ import pdb
 
 class FermentationData(Dataset):
     def __init__(
-        self, work_dir="./Data", train_mode=True, y_var=["od_600"], ws=20, stride=10
+        self, work_dir="./Data", train_mode=True, y_var=["od_600"], ws=20, stride=5
     ):
         self.work_dir = work_dir
         self.train = train_mode
@@ -21,22 +21,22 @@ class FermentationData(Dataset):
         # Data
         self.train_fermentations = [
             # 8,  # 0.540000
-            # 11,  # 3.670000
-            # 12,  # 3.840000
-            # 14,  # 4.500000
-            # 16,  # 2.050000
-            # 17,  # 17.000000
-            # 19,  # 14.500000
-            # 20,  # 14.800000
+            11,  # 3.670000
+            12,  # 3.840000
+            ### 14,  # 4.500000
+            16,  # 2.050000
+            ### 17,  # 17.000000
+            ### 19,  # 14.500000
+            ### 20,  # 14.800000
             22,  # 0.500000
             23,  # 0.570000
             24,  # 0.530000
-            # 25,  # 0.554000
+            25,  # 0.554000
             26,  # 0.532000
             27,  # 0.598000
             28,  # 0.674000
         ]
-        self.test_fermentations = [25]
+        self.test_fermentations = [8]
 
         # variables with cumulative values
         self.cumulative_var = [
@@ -52,7 +52,7 @@ class FermentationData(Dataset):
 
         # input variables
         self.x_var = [
-            # "m_ph",
+            "m_ph",
             "m_ls_opt_do",
             "m_temp",
             "m_stirrer",

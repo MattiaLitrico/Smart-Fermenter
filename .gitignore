@@ -3,6 +3,8 @@ wandb
 **.tar
 **/**.tar
 **/**/**.tar
-**/*.jpg
+*.jpg
+*.npz
 # **/*.xlsx
-# **/logs/*
+# logs/
+# data_analysis/

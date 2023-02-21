@@ -46,7 +46,7 @@ def train(epoch, model, optimiser, trainloader):
 
     num_iter = (len(trainloader.dataset) // trainloader.batch_size) + 1
     total_loss = 0
-    total_acc = 0
+    total_err = 0
     iter = 0
 
     for batch_idx, (input, label) in enumerate(trainloader):
@@ -61,29 +61,37 @@ def train(epoch, model, optimiser, trainloader):
 
         output, h = model(input.float(), h)
 
-        # Compute loss and accuracy
+        # Compute loss and error
         loss = compute_loss(output, label)
-        acc = mae(output, label.float())
+        # err = mae(output, label.float())
+        err = torch.sqrt(mse(output, label.float()))
 
         loss.backward()
         optimiser.step()
         optimiser.zero_grad()
 
         total_loss += loss.item()
-        total_acc += acc.item()
+        total_err += err.item()
 
-        sys.stdout.write("\r")
-        sys.stdout.write(
-            "Epoch [%3d/%3d] Iter[%3d/%3d]\t Loss: %.4f"
-            % (epoch, args.num_epochs, batch_idx + 1, num_iter, loss.item())
-        )
-        sys.stdout.flush()
+        if iter % 100 == 0:
+            sys.stdout.write("\r")
+            sys.stdout.write(
+                "Epoch [%3d/%3d] Iter[%3d/%3d]\t Loss: %.4f"
+                % (
+                    epoch,
+                    args.num_epochs,
+                    batch_idx + 1,
+                    num_iter,
+                    loss.item(),
+                )
+            )
+            sys.stdout.flush()
 
     if args.wandb:
         wandb.log(
             {
                 "train_loss": total_loss / (iter),
-                "train_acc": total_acc / (iter),
+                "train_err": total_err / (iter),
             },
             step=epoch,
         )
@@ -93,7 +101,7 @@ def test(epoch, model, testloader):
     model.eval()
 
     loss = 0
-    acc = 0
+    err = 0
 
     num_iter = (len(testloader.dataset) // testloader.batch_size) + 1
     iter = 0
@@ -113,17 +121,18 @@ def test(epoch, model, testloader):
 
             output, h = model(input.float(), h)
 
-            # Compute loss and accuracy
+            # Compute loss and error
             loss += compute_loss(output, label)
-            acc += mae(output, label.float()).item()
+            # err += mae(output, label.float()).item()
+            err += torch.sqrt(mse(output, label.float())).item()
 
-    loss = loss / (iter)
-    acc = acc / (iter)
+    loss = loss / iter
+    err = err / iter
 
     sys.stdout.write("\r")
     sys.stdout.write(
-        "Epoch [%3d/%3d] Iter[%3d/%3d]\t Loss: %.4f Acc: %.4f"
-        % (epoch, args.num_epochs, batch_idx + 1, num_iter, loss.item(), acc)
+        "Epoch [%3d/%3d] Iter[%3d/%3d]\t Loss: %.4f RMSE: %.4f"
+        % (epoch, args.num_epochs, batch_idx + 1, num_iter, loss.item(), err)
     )
     sys.stdout.flush()
 
@@ -131,12 +140,12 @@ def test(epoch, model, testloader):
         wandb.log(
             {
                 "val_loss": loss,
-                "val_acc": acc,
+                "val_err": err,
             },
             step=epoch,
         )
 
-    return acc
+    return err
 
 
 def compute_loss(output, label):
@@ -179,10 +188,10 @@ elif args.model == "rnn":
 model.cuda()
 
 mse = nn.MSELoss()
-mae = nn.L1Loss()
+# mae = nn.L1Loss()
 optimiser = torch.optim.SGD(model.parameters(), lr=args.lr, weight_decay=0)
 
-# Initialise best accuracy value
+# Initialise best rmse as maximum
 best = sys.maxsize
 
 # Training
@@ -191,12 +200,12 @@ for epoch in range(args.num_epochs + 1):
     train(epoch, model, optimiser, trainloader)
 
     print("\nTest Net")
-    acc = test(epoch, model, test_loader)
+    rmse = test(epoch, model, test_loader)
 
-    if acc < best:
+    if rmse < best:
         utils.save_weights(model, epoch, "logs/" + args.run_name + "/weights_best.tar")
-        best = acc
+        best = rmse
         print("Saving best!")
 
         if args.wandb:
-            wandb.run.summary["best_acc"] = best
+            wandb.run.summary["best_rmse"] = best

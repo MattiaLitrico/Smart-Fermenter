@@ -31,8 +31,6 @@ def load_data(
         for idx, x_c in enumerate(x_cols):
             tmp = np.array(list(data[x_c].values()))
             # if x_c in [
-            #     # "m_ph",
-            #     # "m_stirrer",
             #     "dm_o2",
             #     "dm_air",
             #     "dm_spump1",
@@ -42,7 +40,7 @@ def load_data(
             # ]:
             #     # pdb.set_trace()
             #     print(
-            #         "################### Normalizing: {} of batch-{} [index-0:{} min:{} and max:{}]".format(
+            #         "################### Normalizing: {} of batch{} [index0:{} min:{} and max:{}]".format(
             #             x_c,
             #             str(fermentation_number),
             #             str(tmp[0]),
@@ -158,30 +156,35 @@ def mix_interpolation(data):
     return a * linear_local_interpolation(data) + b * polynomial_interpolation(data)
 
 
-def plot_od600_curve(preds, labels, dir, mae, fpe):
+def plot_od600_curve(preds, labels, dir, rmse, refy):
     # Plot predicted values vs real values
 
     plt.figure(0)
-    plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
-    plt.plot(preds, label="Predicted")
-    plt.plot(labels, label="Real interpolated")
+    # plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
+    # pdb.set_trace()
+    plt.title(
+        "%s, %s, RMSE=%.2f, REFY=%.2f"
+        % (dir.split("_")[0][5:], dir.split("_")[-1], rmse, refy)
+    )
+    plt.semilogy(preds, label="Predicted")
+    plt.semilogy(labels, label="Real interpolated")
     plt.legend()
-    plt.xlabel("sample index")
+    plt.xlabel("samples")
     plt.ylabel("od600")
     plt.savefig(join(dir, "od600pred.png"))
 
-    idx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    idx = [int(len(labels) / 20) * x for x in idx]
-    idx[-1] = len(labels) - 1
-    # print(idx)
-    plt.figure(1)
-    plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
-    plt.plot(idx, preds[idx], label="Predicted")
-    plt.plot(idx, labels[idx], label="Real interpolated")
-    plt.legend()
-    plt.xlabel("sample index")
-    plt.ylabel("od600")
-    plt.savefig(join(dir, "od600pred_10points.png"))
+    # idx = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    # idx = [int(len(labels) / 20) * x for x in idx]
+    # idx[-1] = len(labels) - 1
+    # # print(idx)
+    # plt.figure(1)
+    # plt.title("%s_MAE=%.2f_FPE=%.2f%%" % (dir[5:], mae, fpe))
+    # plt.plot(idx, preds[idx], label="Predicted")
+    # plt.plot(idx, labels[idx], label="Real interpolated")
+    # plt.legend()
+    # plt.xlabel("sample index")
+    # plt.ylabel("od600")
+    # plt.savefig(join(dir, "od600pred_10points.png"))
 
 
 def reject_outliers(data, m=2):

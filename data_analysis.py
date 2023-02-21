@@ -4,13 +4,6 @@ import pdb
 import matplotlib.pyplot as plt
 import os
 
-# work_dir = "Data1/"
-# work_dir = "Data/"
-work_dir = "Data3/"
-# work_dir = "Data4/"
-
-if not os.path.exists("data_analysis/" + work_dir[:-1]):
-    os.makedirs("data_analysis/" + work_dir[:-1])
 
 # input variables
 x_var = [
@@ -41,7 +34,7 @@ def mix_interpolation(data):
     return utils.mix_interpolation(data).reshape(-1, 1)
 
 
-def data2sequences(self, X, ws=20, stride=10):
+def data2sequences(X, ws=20, stride=10):
     # Transform data to sequences with default sliding window 20 and stride 10
     return utils.data2sequences(X, ws, stride)
 
@@ -51,13 +44,12 @@ def preprocess_labels(Y, norm_mode="z-score", ws=20, stride=10):
     processed_Y = []
     for y in Y:
         y = mix_interpolation(y)
-    #     pdb.set_trace()
-    #     y = data2sequences(y, ws, stride)
-    #     processed_Y.append(y)
+        y = data2sequences(y, ws, stride)
+        processed_Y.append(y)
 
-    # processed_Y = np.concatenate(processed_Y, axis=0)
+    processed_Y = np.concatenate(processed_Y, axis=0)
 
-    return y  # processed_Y
+    return processed_Y
 
 
 def unique(list1):
@@ -75,25 +67,32 @@ def unique(list1):
 
 
 ### plot x_var
+work_dir = "Data5/"
+
+results_dir = "data_analysis/" + work_dir[:-1]
+
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
+
 
 for var in range(len(x_var)):
     plt.figure(var)
     for n in [
         8,
-        # 11,
-        # 12,
+        11,
+        12,
         # 14,
-        # 16,
+        16,
         # 17,
         # 19,
         # 20,
         22,
-        # 23,
-        # 24,
+        23,
+        24,
         25,
         26,
-        # 27,
-        # 28,
+        27,
+        28,
     ]:
         # pdb.set_trace()
         data = utils.load_data(
@@ -106,7 +105,7 @@ for var in range(len(x_var)):
         #
         # pdb.set_trace()
         X = data[0]  # [data[1] > 0]
-        plt.plot(X, label="batch-%d" % (n))
+        plt.plot(X, label="batch-%d" % (n), linewidth=2)
         #
         # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
         # plt.plot(Y_I, label="I_batch-%d" % (n))
@@ -116,33 +115,40 @@ for var in range(len(x_var)):
             % (x_var[var], n, X[0], X[-1])
         )
 
-    plt.legend()
-    plt.xlabel("sample index")
+    plt.legend(ncol=3)
+    plt.xlabel("samples")
     plt.ylabel(x_var[var])
-    plt.title(work_dir[:-1])
-    plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png")
+    # plt.tight_layout()
+    # plt.title(work_dir[:-1])
+    plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png", dpi=300)
     plt.close()
 
+
+##################################################################################
 # pdb.set_trace()
-### plot y_var
-plt.figure(100)
+work_dir = "Data1/"
+results_dir = "data_analysis/"
+### plot all od600
+plt.figure()
 for n in [
     8,
-    # 11,
-    # 12,
-    # 14,
-    # 16,
-    # 17,
-    # 19,
-    # 20,
+    11,
+    12,
+    14,
+    16,
+    17,
+    19,
+    20,
     22,
-    # 23,
-    # 24,
+    23,
+    24,
     25,
     26,
-    # 27,
-    # 28,
+    27,
+    28,
 ]:
+    Y = []
+
     data = utils.load_data(
         work_dir=work_dir,
         fermentation_number=n,
@@ -150,18 +156,89 @@ for n in [
         x_cols=x_var,
         y_cols=y_var,
     )
-    #
-    Y = data[1][data[1] > 0]
-    # pdb.set_trace()
-    plt.plot(unique(np.where(data[1] == Y)[0]), Y, label="batch-%d" % (n))
+    Y.append(data[1])
+
+    Y2 = np.array(Y)
+
+    # #
+    # Y = data[1][data[1] > 0]
+    # plt.loglog(unique(np.where(data[1] == Y)[0]), Y, label="batch-%d" % (n))
     #
     # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
     # plt.plot(Y_I, label="I_batch-%d" % (n))
     #
-    print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y[0], Y[-1]))
+    # pdb.set_trace()
+    Y_I = preprocess_labels(Y2, norm_mode="z-score", ws=20, stride=1)
+    Y3 = Y_I[:, -1, -1]
+    plt.semilogy(Y3, label="batch-%d" % (n), linewidth=2)
+    #
+    print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
-plt.legend()
-plt.xlabel("sample index")
+plt.legend(ncol=3)
+plt.xlabel("samples")
 plt.ylabel("od600")
-plt.title(work_dir[:-1])
-plt.savefig("data_analysis/" + work_dir[:-1] + "/" + "od600.png")
+# plt.tight_layout()
+# plt.title(work_dir[:-1])
+
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
+
+plt.savefig(results_dir + "/" + "all-od600.png", dpi=300)
+
+
+##################################################################################
+# pdb.set_trace()
+work_dir = "Data5/"
+results_dir = "data_analysis/"
+### plot all od600
+plt.figure()
+for n in [
+    8,
+    11,
+    12,
+    16,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+]:
+    Y = []
+
+    data = utils.load_data(
+        work_dir=work_dir,
+        fermentation_number=n,
+        data_file="data.xlsx",
+        x_cols=x_var,
+        y_cols=y_var,
+    )
+    Y.append(data[1])
+
+    Y2 = np.array(Y)
+
+    # #
+    # Y = data[1][data[1] > 0]
+    # plt.loglog(unique(np.where(data[1] == Y)[0]), Y, label="batch-%d" % (n))
+    #
+    # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
+    # plt.plot(Y_I, label="I_batch-%d" % (n))
+    #
+    # pdb.set_trace()
+    Y_I = preprocess_labels(Y2, norm_mode="z-score", ws=20, stride=1)
+    Y3 = Y_I[:, -1, -1]
+    plt.semilogy(Y3, label="batch-%d" % (n), linewidth=2)
+    #
+    print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
+
+plt.legend(ncol=3)
+plt.xlabel("samples")
+plt.ylabel("od600")
+# plt.tight_layout()
+# plt.title(work_dir[:-1])
+
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
+
+plt.savefig(results_dir + "/" + "selected-od600.png", dpi=300)
