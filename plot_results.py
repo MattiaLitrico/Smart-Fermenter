@@ -40,11 +40,20 @@ def save_plot(file_path, lstm, rnn):
     # text on plot
     # plt.text(500, 2, "This text starts at point (2,4)", horizontalalignment="right")
     plt.savefig(file_path + ".png", dpi=300)
-    print("Saved: ", file_path + ".png")
+    print(
+        "Saved: ",
+        file_path + ".png",
+        "[Final Yeild: ",
+        lstm["preds"][-1] - rnn["labels"][-1],
+        rnn["preds"][-1] - rnn["labels"][-1],
+        "/",
+        rnn["labels"][-1],
+        "]",
+    )
 
 
 # args.batch = 8
-dir_path = "logs/"
+dir_path = "logs/Data5/"
 LSTM_path = dir_path + "LSTM_Data5_Batch-" + str(args.batch)
 RNN_path = dir_path + "RNN_Data5_Batch-" + str(args.batch)
 LSTM_data = np.load(LSTM_path + "/results.npz")

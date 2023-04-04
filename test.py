@@ -148,7 +148,7 @@ mse = np.square(np.subtract(preds, labels)).mean()
 rmse = math.sqrt(mse)
 
 # Relative Error on Final Yield
-refy = abs(preds[-1] - labels[-1])
+refy = abs(preds[-1] - labels[-1]) / labels[-1] * 100
 
 # pdb.set_trace()
 np.savez(
@@ -167,4 +167,6 @@ utils.plot_od600_curve(
 # print("\nMAE Error OD600: ", mae)
 # print("\nFPE: ", fpe)  # , "%")
 print("\nRMSE Error OD600: ", rmse)
-print("\nREFY: ", refy)  # , "%")
+print(
+    "\nREFY: %.2f%%" % (refy), "[absolute error: %.2f]" % (abs(preds[-1] - labels[-1]))
+)

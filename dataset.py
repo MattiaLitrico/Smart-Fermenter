@@ -20,8 +20,8 @@ class FermentationData(Dataset):
         # lists of number of fermentations for training and testing
         # Data
         self.train_fermentations = [
-            # 8,  # 0.540000
-            11,  # 3.670000
+            8,  # 0.540000
+            # 11,  # 3.670000
             12,  # 3.840000
             ### 14,  # 4.500000
             16,  # 2.050000
@@ -36,7 +36,7 @@ class FermentationData(Dataset):
             27,  # 0.598000
             28,  # 0.674000
         ]
-        self.test_fermentations = [8]
+        self.test_fermentations = [28]
 
         # variables with cumulative values
         self.cumulative_var = [
