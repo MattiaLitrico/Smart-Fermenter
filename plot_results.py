@@ -31,22 +31,24 @@ def save_plot(file_path, lstm, rnn):
     )
     plt.semilogy(rnn["labels"], label="Ground truth", linestyle="--", linewidth=2)
     plt.legend(loc="lower right")
-    # plt.tight_layout()
     # plt.ylim(bottom=0.5)
     # plt.grid(which="minor")
-    plt.xlabel("samples")
-    plt.ylabel("od600")
+    plt.xlabel("samples", fontsize=14)
+    plt.ylabel("OD$_{600nm}$", fontsize=14)
+    plt.tight_layout()
     # plt.title("Batch-" + file_path.split("/")[-1])
     # text on plot
     # plt.text(500, 2, "This text starts at point (2,4)", horizontalalignment="right")
-    plt.savefig(file_path + ".png", dpi=300)
+    plt.savefig(file_path + ".png", dpi=600)
     print(
         "Saved: ",
         file_path + ".png",
-        "[Final Yeild: ",
-        lstm["preds"][-1] - rnn["labels"][-1],
-        rnn["preds"][-1] - rnn["labels"][-1],
-        "/",
+        "[REFY: %.2f%%,  %.2f%%"
+        % (
+            abs(lstm["preds"][-1] - lstm["labels"][-1]) / lstm["labels"][-1] * 100,
+            abs(rnn["preds"][-1] - rnn["labels"][-1]) / rnn["labels"][-1] * 100,
+        ),
+        ",",
         rnn["labels"][-1],
         "]",
     )

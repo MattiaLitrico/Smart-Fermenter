@@ -21,7 +21,7 @@ class FermentationData(Dataset):
         # Data
         self.train_fermentations = [
             8,  # 0.540000
-            # 11,  # 3.670000
+            11,  # 3.670000
             12,  # 3.840000
             ### 14,  # 4.500000
             16,  # 2.050000
@@ -34,7 +34,7 @@ class FermentationData(Dataset):
             25,  # 0.554000
             26,  # 0.532000
             27,  # 0.598000
-            28,  # 0.674000
+            # 28,  # 0.674000
         ]
         self.test_fermentations = [28]
 

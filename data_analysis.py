@@ -52,6 +52,14 @@ def preprocess_labels(Y, norm_mode="z-score", ws=20, stride=10):
     return processed_Y
 
 
+def get_interpolation(Y, norm_mode="z-score", ws=20, stride=10):
+    # Preprocess labels
+    y_int = mix_interpolation(Y)
+    processed_Y = data2sequences(y_int, ws, stride)
+
+    return y_int, processed_Y
+
+
 def unique(list1):
 
     # initialize a null list
@@ -116,11 +124,11 @@ for var in range(len(x_var)):
         )
 
     plt.legend(ncol=3)
-    plt.xlabel("samples")
-    plt.ylabel(x_var[var])
-    # plt.tight_layout()
+    plt.xlabel("samples", fontsize=14)
+    plt.ylabel(x_var[var], fontsize=14)
+    plt.tight_layout()
     # plt.title(work_dir[:-1])
-    plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png", dpi=300)
+    plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png", dpi=600)
     plt.close()
 
 
@@ -175,15 +183,15 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
-plt.xlabel("samples")
-plt.ylabel("od600")
-# plt.tight_layout()
+plt.xlabel("samples", fontsize=14)
+plt.ylabel("OD$_{600nm}$", fontsize=14)
+plt.tight_layout()
 # plt.title(work_dir[:-1])
 
 if not os.path.exists(results_dir):
     os.makedirs(results_dir)
 
-plt.savefig(results_dir + "/" + "all-od600.png", dpi=300)
+plt.savefig(results_dir + "/" + "all-od600.png", dpi=600)
 
 
 ##################################################################################
@@ -233,12 +241,66 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
-plt.xlabel("samples")
-plt.ylabel("od600")
-# plt.tight_layout()
+plt.xlabel("samples", fontsize=14)
+plt.ylabel("OD$_{600nm}$", fontsize=14)
+plt.tight_layout()
 # plt.title(work_dir[:-1])
 
 if not os.path.exists(results_dir):
     os.makedirs(results_dir)
 
-plt.savefig(results_dir + "/" + "selected-od600.png", dpi=300)
+plt.savefig(results_dir + "/" + "selected-od600.png", dpi=600)
+
+
+##################################################################################
+# pdb.set_trace()
+work_dir = "Data5/"
+results_dir = "data_analysis/"
+### plot
+plt.figure()
+Y = []
+n = 8
+
+data = utils.load_data(
+    work_dir=work_dir,
+    fermentation_number=n,
+    data_file="data.xlsx",
+    x_cols=x_var,
+    y_cols=y_var,
+)
+Y = data[1]
+
+newList = []
+newIndex = []
+idx = 0
+for element in Y:
+    if str(element[0]) != "nan":
+        newList.append(element[0])
+        newIndex.append(idx)
+    idx += 1
+
+Y = np.array(Y)
+
+
+y_int, y = get_interpolation(Y, norm_mode="z-score", ws=20, stride=10)
+plt.plot(
+    newIndex,
+    newList,
+    "r",
+    label="actual values",
+    marker="x",
+    markersize=10,
+    linewidth=0,
+)
+plt.plot(y_int, label="interpolated", linewidth=2)
+
+plt.legend(ncol=3)
+plt.xlabel("samples", fontsize=14)
+plt.ylabel("OD$_{600nm}$", fontsize=14)
+plt.tight_layout()
+# plt.title(work_dir[:-1])
+
+if not os.path.exists(results_dir):
+    os.makedirs(results_dir)
+
+plt.savefig(results_dir + "/" + "interpolation.png", dpi=600)
