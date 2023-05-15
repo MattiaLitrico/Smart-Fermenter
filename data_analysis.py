@@ -3,7 +3,7 @@ import numpy as np
 import pdb
 import matplotlib.pyplot as plt
 import os
-
+from scipy import signal
 
 # input variables
 x_var = [
@@ -84,7 +84,7 @@ if not os.path.exists(results_dir):
 
 
 for var in range(len(x_var)):
-    plt.figure(var)
+    plt.figure(var) #,figsize=(10, 5))
     for n in [
         8,
         11,
@@ -111,9 +111,15 @@ for var in range(len(x_var)):
             y_cols=y_var,
         )
         #
-        # pdb.set_trace()
         X = data[0]  # [data[1] > 0]
-        plt.plot(X, label="batch-%d" % (n), linewidth=2)
+        if x_var[var]=="m_stirrer" or x_var[var]=="m_ls_opt_do": 
+            scale_factor = 10
+            # X =  signal.resample(X, int(len(X)/scale_factor)) # downsampling
+            # x1=np.arange(len(X))*scale_factor
+            x1=list(range(0, len(X), scale_factor))
+            plt.plot(x1,X[x1], label="batch-%d" % (n), linewidth=2)
+        else:
+            plt.plot(X, label="batch-%d" % (n), linewidth=2)
         #
         # Y_I = preprocess_labels([data[1]], norm_mode="z-score", ws=20, stride=1)
         # plt.plot(Y_I, label="I_batch-%d" % (n))
@@ -124,9 +130,10 @@ for var in range(len(x_var)):
         )
 
     plt.legend(ncol=3)
-    plt.xlabel("samples", fontsize=14)
+    plt.xlabel("timestamp", fontsize=14)
     plt.ylabel(x_var[var], fontsize=14)
     plt.tight_layout()
+    # plt.autoscale(enable=True, axis='x', tight=True)
     # plt.title(work_dir[:-1])
     plt.savefig("data_analysis/" + work_dir[:-1] + "/" + x_var[var] + ".png", dpi=600)
     plt.close()
@@ -137,7 +144,7 @@ for var in range(len(x_var)):
 work_dir = "Data1/"
 results_dir = "data_analysis/"
 ### plot all od600
-plt.figure()
+plt.figure() #figsize=(10, 5))
 for n in [
     8,
     11,
@@ -183,7 +190,7 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
-plt.xlabel("samples", fontsize=14)
+plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
 # plt.title(work_dir[:-1])
@@ -199,7 +206,7 @@ plt.savefig(results_dir + "/" + "all-od600.png", dpi=600)
 work_dir = "Data5/"
 results_dir = "data_analysis/"
 ### plot all od600
-plt.figure()
+plt.figure() #figsize=(10, 5))
 for n in [
     8,
     11,
@@ -241,7 +248,7 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
-plt.xlabel("samples", fontsize=14)
+plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
 # plt.title(work_dir[:-1])
@@ -257,7 +264,7 @@ plt.savefig(results_dir + "/" + "selected-od600.png", dpi=600)
 work_dir = "Data5/"
 results_dir = "data_analysis/"
 ### plot
-plt.figure()
+plt.figure() #figsize=(10, 5))
 Y = []
 n = 8
 
@@ -295,7 +302,7 @@ plt.plot(
 plt.plot(y_int, label="interpolated", linewidth=2)
 
 plt.legend(ncol=3)
-plt.xlabel("samples", fontsize=14)
+plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
 # plt.title(work_dir[:-1])

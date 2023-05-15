@@ -33,7 +33,7 @@ def save_plot(file_path, lstm, rnn):
     plt.legend(loc="lower right")
     # plt.ylim(bottom=0.5)
     # plt.grid(which="minor")
-    plt.xlabel("samples", fontsize=14)
+    plt.xlabel("timestamp", fontsize=14)
     plt.ylabel("OD$_{600nm}$", fontsize=14)
     plt.tight_layout()
     # plt.title("Batch-" + file_path.split("/")[-1])
