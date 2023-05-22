@@ -31,6 +31,7 @@ def save_plot(file_path, lstm, rnn):
     )
     plt.semilogy(rnn["labels"], label="Ground truth", linestyle="--", linewidth=2)
     plt.legend(loc="lower right")
+    plt.gca().ticklabel_format(axis="x", style="sci", scilimits=(0,0))
     # plt.ylim(bottom=0.5)
     # plt.grid(which="minor")
     plt.xlabel("timestamp", fontsize=14)

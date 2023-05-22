@@ -1,6 +1,8 @@
 import utils
 import numpy as np
 import pdb
+import matplotlib as mpl
+from matplotlib.ticker import StrMethodFormatter
 import matplotlib.pyplot as plt
 import os
 from scipy import signal
@@ -130,6 +132,9 @@ for var in range(len(x_var)):
         )
 
     plt.legend(ncol=3)
+    # plt.gca().yaxis.set_major_formatter(StrMethodFormatter('{x:,.0f}')) # No decimal places     
+    plt.gca().ticklabel_format(axis="both", style="sci", scilimits=(0,0))
+    #
     plt.xlabel("timestamp", fontsize=14)
     plt.ylabel(x_var[var], fontsize=14)
     plt.tight_layout()
@@ -190,6 +195,7 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
+plt.gca().ticklabel_format(axis="x", style="sci", scilimits=(0,0))
 plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
@@ -248,6 +254,7 @@ for n in [
     print("Var: od600, batch-%d, first value=%f, last value=%f" % (n, Y3[0], Y3[-1]))
 
 plt.legend(ncol=3)
+plt.gca().ticklabel_format(axis="x", style="sci", scilimits=(0,0))
 plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
@@ -302,6 +309,7 @@ plt.plot(
 plt.plot(y_int, label="interpolated", linewidth=2)
 
 plt.legend(ncol=3)
+plt.gca().ticklabel_format(axis="both", style="sci", scilimits=(0,0))
 plt.xlabel("timestamp", fontsize=14)
 plt.ylabel("OD$_{600nm}$", fontsize=14)
 plt.tight_layout()
