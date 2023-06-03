@@ -28,3 +28,17 @@ or
 python3 test.py --weights logs/Data5/RNN_Data5_Batch-28/weights_best.tar --dataset ./Data5 --model rnn --hidden_dim 16 --num_layers 2 
 ```
 
+## Reference
+
+```bibtex
+@article{bonanni2023deep,
+  title={A Deep Learning Approach to Optimize Recombinant Protein Production in Escherichia coli Fermentations},
+  author={Bonanni, Domenico and Litrico, Mattia and Ahmed, Waqar and Morerio, Pietro and Cazzorla, Tiziano and Spaccapaniccia, Elisa and Cattani, Franca and Allegretti, Marcello and Beccari, Andrea Rosario and Del Bue, Alessio and others},
+  journal={Fermentation},
+  volume={9},
+  number={6},
+  pages={503},
+  year={2023},
+  publisher={MDPI}
+}
+```
